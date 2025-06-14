@@ -77,17 +77,16 @@ jobs:
         NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'fallback-secret-for-build' }}
         NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8787' }}
     
-    - name: Deploy to Vercel
+    - name: Deploy to Vercel (if configured)
       continue-on-error: true
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: apps/web
-        vercel-args: '--prod'
+      run: |
+        if [ "${{ secrets.VERCEL_TOKEN }}" != "" ]; then
+          echo "Deploying to Vercel..."
+          npx vercel deploy apps/web --prod --token="${{ secrets.VERCEL_TOKEN }}"
+        else
+          echo "VERCEL_TOKEN is not configured. Skipping Vercel deployment. Build was successful."
+        fi
       env:
-        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
