@@ -8,6 +8,7 @@ import { SearchHistory } from '@/components/search/search-history'
 import { CategoryFilter } from '@/components/search/category-filter'
 import { DetailedFilter } from '@/components/search/detailed-filter'
 import { Place, SearchRequest, TIME_PRESETS, TRANSPORT_MODES } from '@quicktrip/shared'
+import { apiRequest } from '@/lib/api'
 
 // Dynamically import Map component to avoid SSR issues
 const Map = dynamic(() => import('@/components/map/map').then(mod => ({ default: mod.Map })), {
@@ -133,7 +134,7 @@ export default function AppPage() {
         facilities: detailedFilters?.facilities || facilities.length > 0 ? facilities as any : undefined,
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places/search`, {
+      const response = await apiRequest('/api/places/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

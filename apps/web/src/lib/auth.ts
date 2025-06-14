@@ -16,7 +16,8 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787'
+          const response = await fetch(`${apiUrl}/api/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -45,10 +46,12 @@ export const authOptions: NextAuthOptions = {
         }
       }
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      })
+    ] : []),
   ],
   pages: {
     signIn: '/auth/signin',
@@ -59,7 +62,8 @@ export const authOptions: NextAuthOptions = {
         if (account.provider === 'google') {
           // Handle Google OAuth
           try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`, {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787'
+          const response = await fetch(`${apiUrl}/api/auth/google`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
