@@ -59,8 +59,30 @@ export const authOptions: NextAuthOptions = {
       if (user && account) {
         if (account.provider === 'google') {
           // Handle Google OAuth
-          // TODO: Create or login user via API
-          token.accessToken = 'temp-token' // Replace with actual API call
+          try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: user.email,
+                name: user.name,
+                provider: 'google',
+              }),
+            })
+
+            if (response.ok) {
+              const data = await response.json()
+              token.accessToken = data.token
+            } else {
+              console.error('Google OAuth API error:', await response.text())
+              token.accessToken = null
+            }
+          } catch (error) {
+            console.error('Google OAuth error:', error)
+            token.accessToken = null
+          }
         } else {
           // Handle credentials login
           token.accessToken = (user as any).accessToken

@@ -20,6 +20,12 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 })
 
+const googleLoginSchema = z.object({
+  email: z.string().email('Invalid email format'),
+  name: z.string().min(1, 'Name is required'),
+  provider: z.literal('google'),
+})
+
 // Register endpoint
 authRoutes.post('/register', zValidator('json', registerSchema), async (c) => {
   const { email, password, name } = c.req.valid('json')
@@ -103,6 +109,54 @@ authRoutes.post('/login', zValidator('json', loginSchema), async (c) => {
     })
   } catch (error) {
     console.error('Login error:', error)
+    return c.json({ error: 'Internal server error' }, 500)
+  }
+})
+
+// Google OAuth login/register
+authRoutes.post('/google', zValidator('json', googleLoginSchema), async (c) => {
+  const { email, name, provider } = c.req.valid('json')
+  
+  try {
+    const prisma = createPrismaClient(c.env.DB)
+    
+    // Check if user already exists
+    let user = await prisma.user.findUnique({
+      where: { email }
+    })
+    
+    if (!user) {
+      // Create new user for Google OAuth
+      user = await prisma.user.create({
+        data: {
+          email,
+          name,
+          provider,
+          password: null, // No password for OAuth users
+        }
+      })
+    } else if (user.provider !== 'google') {
+      // User exists with different provider
+      return c.json({ 
+        error: 'Account exists with different provider. Please use email/password login.' 
+      }, 400)
+    }
+    
+    // Generate JWT
+    const token = await generateJWT(
+      { userId: user.id, email: user.email },
+      c.env.JWT_SECRET
+    )
+    
+    // Return user data without password
+    const { password: _, ...userWithoutPassword } = user
+    
+    return c.json({
+      user: userWithoutPassword,
+      token,
+    })
+  } catch (error) {
+    console.error('Google login error:', error)
     return c.json({ error: 'Internal server error' }, 500)
   }
 })

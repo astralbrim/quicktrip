@@ -1,0 +1,15 @@
+# Cloudflare Workers環境変数の例
+# このファイルを .dev.vars にコピーして、実際の値を設定してください
+
+# JWT認証用の秘密鍵（本番環境では強力な秘密鍵を使用してください）
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# OpenRouteService APIキー（オプション）
+# 設定すると正確な移動時間が取得できます。設定しない場合は距離ベースの推定値を使用します。
+# 取得方法: https://openrouteservice.org/ でアカウント作成後、APIキーを取得
+# 無料プランでは1日1000リクエストまで利用可能
+OPENROUTESERVICE_API_KEY=your-openrouteservice-api-key-here
+
+# データベースURL（開発環境用）
+# 本番環境ではCloudflare D1データベースを使用するため不要
+DATABASE_URL="file:./dev.db"
