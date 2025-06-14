@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?  // nullable for OAuth users
+  name      String?
+  provider  String?  // email, google, github
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  searchHistories SearchHistory[]
+  favorites       Favorite[]
+
+  @@map("users")
+}
+
+model SearchHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  timeMinutes Int
+  transport   String   // walking, driving, cycling, transit
+  latitude    Float
+  longitude   Float
+  address     String?
+  filters     String?  // JSON string
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("search_histories")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  placeId   String
+  placeName String
+  category  String
+  latitude  Float
+  longitude Float
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, placeId])
+  @@index([userId])
+  @@map("favorites")
+}
