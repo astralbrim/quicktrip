@@ -45,7 +45,7 @@ jobs:
   deploy-web:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != ''
     
     steps:
     - uses: actions/checkout@v4
@@ -73,13 +73,9 @@ jobs:
     - name: Build web app
       run: cd apps/web && pnpm run build
       env:
-        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-        GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
-        GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
-        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'fallback-secret-for-build' }}
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8787' }}
     
     - name: Deploy to Vercel
       uses: amondnet/vercel-action@v25
@@ -93,7 +89,7 @@ jobs:
   deploy-api:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && secrets.CLOUDFLARE_API_TOKEN != '' && secrets.JWT_SECRET != ''
     
     steps:
     - uses: actions/checkout@v4
