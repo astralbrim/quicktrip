@@ -27,6 +27,9 @@ jobs:
     - name: Install dependencies
       run: pnpm install
     
+    - name: Build shared package
+      run: cd packages/shared && pnpm build
+    
     - name: Type check
       run: pnpm run type-check
     
@@ -57,6 +60,9 @@ jobs:
     
     - name: Install dependencies
       run: pnpm install
+    
+    - name: Build shared package
+      run: cd packages/shared && pnpm build
     
     - name: Build web app
       run: cd apps/web && pnpm run build
@@ -98,6 +104,9 @@ jobs:
     
     - name: Install dependencies
       run: pnpm install
+    
+    - name: Build shared package
+      run: cd packages/shared && pnpm build
     
     - name: Deploy to Cloudflare Workers
       uses: cloudflare/wrangler-action@v3
