@@ -1,8 +1,10 @@
 {
   "version": 2,
+  "buildCommand": "cd ../.. && pnpm install && pnpm build --filter=@quicktrip/web",
+  "installCommand": "echo 'Skipping default install'",
   "builds": [
     {
-      "src": "package.json",
+      "src": "next.config.js",
       "use": "@vercel/next"
     }
   ],
