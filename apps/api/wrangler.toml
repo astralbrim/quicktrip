@@ -7,9 +7,9 @@ compatibility_flags = ["nodejs_compat"]
 ENVIRONMENT = "development"
 
 [[d1_databases]]
-binding = "DB"
-database_name = "quicktrip-dev"
-database_id = "your-database-id"
+  binding = "DB"
+  database_name = "quicktrip-db"
+  database_id = "e86396ef-49f0-44f7-81d0-6b2cf8db75bd"
 
 [env.production]
 name = "quicktrip-api-prod"
