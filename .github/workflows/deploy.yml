@@ -86,14 +86,10 @@ jobs:
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         working-directory: apps/web
         vercel-args: '--prod'
-        vercel-env-production: |
-          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL || 'https://quicktrip.vercel.app' }}
-          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }}
-          GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }}
-          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL || 'https://quicktrip-api.astral-brim.workers.dev' }}
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   deploy-api:
     needs: test
@@ -123,16 +119,6 @@ jobs:
     - name: Generate Prisma client
       run: cd apps/api && pnpm prisma generate
     
-    - name: Clear existing secrets
-      continue-on-error: true
-      working-directory: apps/api
-      run: |
-        npx wrangler secret delete JWT_SECRET --force || true
-        npx wrangler secret delete OPENROUTESERVICE_API_KEY --force || true
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
     - name: Deploy to Cloudflare Workers
       continue-on-error: true
       uses: cloudflare/wrangler-action@v3
@@ -141,9 +127,3 @@ jobs:
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         workingDirectory: apps/api
         command: deploy
-        secrets: |
-          JWT_SECRET
-          OPENROUTESERVICE_API_KEY
-      env:
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        OPENROUTESERVICE_API_KEY: ${{ secrets.OPENROUTESERVICE_API_KEY }}
