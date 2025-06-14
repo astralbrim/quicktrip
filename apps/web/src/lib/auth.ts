@@ -17,6 +17,10 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787'
+          if (!apiUrl || apiUrl.trim() === '') {
+            console.error('API URL is not configured')
+            return null
+          }
           const response = await fetch(`${apiUrl}/api/auth/login`, {
             method: 'POST',
             headers: {
@@ -63,6 +67,11 @@ export const authOptions: NextAuthOptions = {
           // Handle Google OAuth
           try {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787'
+            if (!apiUrl || apiUrl.trim() === '') {
+              console.error('API URL is not configured for Google OAuth')
+              token.accessToken = null
+              return token
+            }
           const response = await fetch(`${apiUrl}/api/auth/google`, {
               method: 'POST',
               headers: {

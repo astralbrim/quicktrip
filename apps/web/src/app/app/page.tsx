@@ -8,7 +8,7 @@ import { SearchHistory } from '@/components/search/search-history'
 import { CategoryFilter } from '@/components/search/category-filter'
 import { DetailedFilter } from '@/components/search/detailed-filter'
 import { Place, SearchRequest, TIME_PRESETS, TRANSPORT_MODES } from '@quicktrip/shared'
-import { apiRequest } from '@/lib/api'
+import { apiRequest, getApiUrl } from '@/lib/api'
 
 // Dynamically import Map component to avoid SSR issues
 const Map = dynamic(() => import('@/components/map/map').then(mod => ({ default: mod.Map })), {
@@ -149,7 +149,8 @@ export default function AppPage() {
         
         // Save search history if user is logged in
         if (session?.accessToken) {
-          await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/search-history`, {
+          const apiUrl = getApiUrl()
+          await fetch(`${apiUrl}/api/users/search-history`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
