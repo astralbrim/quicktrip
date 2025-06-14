@@ -82,13 +82,19 @@ jobs:
       run: |
         if [ "${{ secrets.VERCEL_TOKEN }}" != "" ]; then
           echo "Deploying to Vercel..."
-          npx vercel deploy apps/web --prod --token="${{ secrets.VERCEL_TOKEN }}"
+          cd apps/web
+          npx vercel deploy --prod --token="${{ secrets.VERCEL_TOKEN }}" --yes
         else
           echo "VERCEL_TOKEN is not configured. Skipping Vercel deployment. Build was successful."
         fi
       env:
         VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
   deploy-api:
     needs: test

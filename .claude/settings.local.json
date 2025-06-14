@@ -39,7 +39,10 @@
       "Bash(git remote set-url:*)",
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
-      "Bash(pnpm type-check:*)"
+      "Bash(pnpm type-check:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm prisma generate:*)",
+      "Bash(NEXTAUTH_SECRET=test-secret NEXTAUTH_URL=http://localhost:3000 NEXT_PUBLIC_API_URL=http://localhost:8787 pnpm build)"
     ],
     "deny": []
   }
