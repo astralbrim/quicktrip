@@ -30,6 +30,9 @@ jobs:
     - name: Build shared package
       run: cd packages/shared && pnpm build
     
+    - name: Generate Prisma client
+      run: cd apps/api && pnpm prisma generate
+    
     - name: Type check
       run: pnpm run type-check
     
@@ -63,6 +66,9 @@ jobs:
     
     - name: Build shared package
       run: cd packages/shared && pnpm build
+    
+    - name: Generate Prisma client
+      run: cd apps/api && pnpm prisma generate
     
     - name: Build web app
       run: cd apps/web && pnpm run build
@@ -108,6 +114,9 @@ jobs:
     
     - name: Build shared package
       run: cd packages/shared && pnpm build
+    
+    - name: Generate Prisma client
+      run: cd apps/api && pnpm prisma generate
     
     - name: Deploy to Cloudflare Workers
       uses: cloudflare/wrangler-action@v3
