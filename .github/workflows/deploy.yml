@@ -42,7 +42,7 @@ jobs:
   deploy-web:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != ''
     
     steps:
     - uses: actions/checkout@v4
@@ -76,17 +76,18 @@ jobs:
         NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
     
     - name: Deploy to Vercel
-      uses: vercel/action@v1
+      uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         working-directory: apps/web
+        vercel-args: '--prod'
 
   deploy-api:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && secrets.CLOUDFLARE_API_TOKEN != ''
     
     steps:
     - uses: actions/checkout@v4
