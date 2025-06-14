@@ -1,4 +1,4 @@
-import type { Place } from '@quicktrip/shared'
+import type { Place, PlaceCategory, PriceRange, Facility } from '@quicktrip/shared'
 
 export interface OverpassPlace {
   type: string
@@ -93,10 +93,8 @@ export class OverpassService {
             return `node["amenity"="cafe"](${bbox});`
           case 'park':
             return `node["leisure"="park"](${bbox});`
-          case 'shopping':
-            return `node["shop"](${bbox});`
-          case 'entertainment':
-            return `node["amenity"="cinema"](${bbox});node["amenity"="bar"](${bbox});`
+          case 'leisure':
+            return `node["amenity"="cinema"](${bbox});node["amenity"="bar"](${bbox});node["leisure"](${bbox});`
           default:
             return ''
         }
@@ -166,7 +164,7 @@ out geom;`
       .slice(0, 50) // Limit results
   }
 
-  private mapCategory(tags: OverpassPlace['tags']): string {
+  private mapCategory(tags: OverpassPlace['tags']): PlaceCategory {
     if (tags.tourism) {
       return 'tourist_attraction'
     }
@@ -180,12 +178,12 @@ out geom;`
       return 'park'
     }
     if (tags.shop) {
-      return 'shopping'
+      return 'leisure'
     }
     if (tags.amenity && ['cinema', 'theatre', 'nightclub', 'bar', 'pub'].includes(tags.amenity)) {
-      return 'entertainment'
+      return 'leisure'
     }
-    return 'other'
+    return 'tourist_attraction'
   }
 
   private buildAddress(tags: OverpassPlace['tags']): string {
@@ -211,7 +209,7 @@ out geom;`
     return parts.join(', ')
   }
 
-  private estimatePriceRange(tags: OverpassPlace['tags']): string {
+  private estimatePriceRange(tags: OverpassPlace['tags']): PriceRange {
     // Simple heuristic based on type
     if (tags.amenity === 'fast_food') return 'under_1000'
     if (tags.amenity === 'cafe') return 'under_1000'
@@ -222,8 +220,8 @@ out geom;`
     return 'under_1000'
   }
 
-  private extractFacilities(tags: OverpassPlace['tags']): string[] {
-    const facilities = []
+  private extractFacilities(tags: OverpassPlace['tags']): Facility[] {
+    const facilities: Facility[] = []
     
     if (tags.wheelchair === 'yes') facilities.push('barrier_free')
     // Add more facility mappings as needed

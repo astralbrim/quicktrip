@@ -9,6 +9,10 @@ const userRoutes = new Hono<{ Bindings: Env; Variables: Variables }>()
 userRoutes.get('/me', authMiddleware, async (c) => {
   const userId = c.get('userId')
   
+  if (!userId) {
+    return c.json({ error: 'User ID not found' }, 401)
+  }
+  
   try {
     const prisma = createPrismaClient(c.env.DB)
     
@@ -39,6 +43,10 @@ userRoutes.get('/me', authMiddleware, async (c) => {
 userRoutes.get('/search-history', authMiddleware, async (c) => {
   const userId = c.get('userId')
   
+  if (!userId) {
+    return c.json({ error: 'User ID not found' }, 401)
+  }
+  
   try {
     const prisma = createPrismaClient(c.env.DB)
     
@@ -59,6 +67,10 @@ userRoutes.get('/search-history', authMiddleware, async (c) => {
 userRoutes.post('/search-history', authMiddleware, async (c) => {
   const userId = c.get('userId')
   const { timeMinutes, transport, latitude, longitude, address, filters } = await c.req.json()
+  
+  if (!userId) {
+    return c.json({ error: 'User ID not found' }, 401)
+  }
   
   try {
     const prisma = createPrismaClient(c.env.DB)

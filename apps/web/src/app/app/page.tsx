@@ -117,10 +117,10 @@ export default function AppPage() {
         longitude: lng,
         timeMinutes: time,
         transport: transportMode as any,
-        categories: categories || selectedCategories.length > 0 ? selectedCategories : undefined,
+        categories: categories || selectedCategories.length > 0 ? selectedCategories as any : undefined,
         priceRange: detailedFilters?.priceRange || priceRange,
         openNow: detailedFilters?.openNow !== undefined ? detailedFilters.openNow : openNow,
-        facilities: detailedFilters?.facilities || facilities.length > 0 ? facilities : undefined,
+        facilities: detailedFilters?.facilities || facilities.length > 0 ? facilities as any : undefined,
       }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/places/search`, {

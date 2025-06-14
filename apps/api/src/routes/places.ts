@@ -114,12 +114,12 @@ placeRoutes.post('/search', optionalAuthMiddleware, zValidator('json', searchSch
             place.longitude,
             searchParams.transport
           )
-          console.log(`Route calculated: ${place.name} - ${travelTime} minutes (vs estimated: ${Math.ceil(place.distance / getTransportSpeed(searchParams.transport) / 60)} minutes)`)
+          console.log(`Route calculated: ${place.name} - ${travelTime} minutes (vs estimated: ${Math.ceil((place.distance || 0) / getTransportSpeed(searchParams.transport) / 60)} minutes)`)
           return { ...place, travelTime }
         } catch (error) {
           console.error(`Failed to calculate travel time for place ${place.id}:`, error)
           // Fallback to estimation based on distance
-          const estimatedTime = Math.ceil(place.distance / getTransportSpeed(searchParams.transport) / 60)
+          const estimatedTime = Math.ceil((place.distance || 0) / getTransportSpeed(searchParams.transport) / 60)
           console.log(`Fallback to estimation for ${place.name}: ${estimatedTime} minutes`)
           return { ...place, travelTime: estimatedTime }
         }
@@ -130,7 +130,7 @@ placeRoutes.post('/search', optionalAuthMiddleware, zValidator('json', searchSch
       // Add remaining places with estimated travel times
       const remainingPlaces = places.slice(20).map(place => ({
         ...place,
-        travelTime: Math.ceil(place.distance / getTransportSpeed(searchParams.transport) / 60)
+        travelTime: Math.ceil((place.distance || 0) / getTransportSpeed(searchParams.transport) / 60)
       }))
       
       places = [...placesWithTravelTime, ...remainingPlaces]
@@ -138,12 +138,12 @@ placeRoutes.post('/search', optionalAuthMiddleware, zValidator('json', searchSch
       // Fallback to distance-based estimation
       places = places.map(place => ({
         ...place,
-        travelTime: Math.ceil(place.distance / getTransportSpeed(searchParams.transport) / 60)
+        travelTime: Math.ceil((place.distance || 0) / getTransportSpeed(searchParams.transport) / 60)
       }))
     }
     
     // Filter places by travel time
-    let filteredPlaces = places.filter(place => place.travelTime <= searchParams.timeMinutes)
+    let filteredPlaces = places.filter(place => (place.travelTime || 0) <= searchParams.timeMinutes)
     
     // Apply additional filters
     if (searchParams.priceRange) {
@@ -158,16 +158,16 @@ placeRoutes.post('/search', optionalAuthMiddleware, zValidator('json', searchSch
     
     if (searchParams.facilities && searchParams.facilities.length > 0) {
       filteredPlaces = filteredPlaces.filter(place => 
-        searchParams.facilities!.some(facility => place.facilities.includes(facility))
+        searchParams.facilities!.some(facility => place.facilities?.includes(facility as any))
       )
     }
     
     // Sort by travel time, then by distance
     filteredPlaces.sort((a, b) => {
-      if (a.travelTime !== b.travelTime) {
-        return a.travelTime - b.travelTime
+      if ((a.travelTime || 0) !== (b.travelTime || 0)) {
+        return (a.travelTime || 0) - (b.travelTime || 0)
       }
-      return a.distance - b.distance
+      return (a.distance || 0) - (b.distance || 0)
     })
     
     // Limit results
@@ -208,7 +208,7 @@ placeRoutes.post('/search', optionalAuthMiddleware, zValidator('json', searchSch
     
     if (searchParams.facilities && searchParams.facilities.length > 0) {
       filteredPlaces = filteredPlaces.filter(place => 
-        searchParams.facilities!.some(facility => place.facilities.includes(facility))
+        searchParams.facilities!.some(facility => place.facilities?.includes(facility as any))
       )
     }
     
