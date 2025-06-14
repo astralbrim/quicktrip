@@ -1,12 +1,12 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import type { Env } from '../index'
+import type { Env, Variables } from '../index'
 import { optionalAuthMiddleware } from '../middleware/auth'
 import { OverpassService } from '../services/overpass'
 import { RoutingService } from '../services/routing'
 
-const placeRoutes = new Hono<{ Bindings: Env }>()
+const placeRoutes = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // Search places validation schema
 const searchSchema = z.object({

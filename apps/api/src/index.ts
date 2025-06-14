@@ -11,7 +11,12 @@ export interface Env {
   OPENROUTESERVICE_API_KEY?: string
 }
 
-const app = new Hono<{ Bindings: Env }>()
+export type Variables = {
+  userId?: string
+  userEmail?: string
+}
+
+const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // Middleware
 app.use('*', logger())

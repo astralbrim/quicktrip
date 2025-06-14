@@ -1,6 +1,6 @@
 import { Context, Next } from 'hono'
 import { jwtVerify } from 'jose'
-import type { Env } from '../index'
+import type { Env, Variables } from '../index'
 
 export interface JWTPayload {
   userId: string
@@ -9,7 +9,7 @@ export interface JWTPayload {
   exp: number
 }
 
-export const authMiddleware = async (c: Context<{ Bindings: Env }>, next: Next) => {
+export const authMiddleware = async (c: Context<{ Bindings: Env; Variables: Variables }>, next: Next) => {
   const authHeader = c.req.header('Authorization')
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -33,7 +33,7 @@ export const authMiddleware = async (c: Context<{ Bindings: Env }>, next: Next) 
   }
 }
 
-export const optionalAuthMiddleware = async (c: Context<{ Bindings: Env }>, next: Next) => {
+export const optionalAuthMiddleware = async (c: Context<{ Bindings: Env; Variables: Variables }>, next: Next) => {
   const authHeader = c.req.header('Authorization')
   
   if (authHeader && authHeader.startsWith('Bearer ')) {

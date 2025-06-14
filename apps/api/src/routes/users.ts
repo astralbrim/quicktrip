@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import type { Env } from '../index'
+import type { Env, Variables } from '../index'
 import { authMiddleware } from '../middleware/auth'
 import { createPrismaClient } from '../utils/db'
 
-const userRoutes = new Hono<{ Bindings: Env }>()
+const userRoutes = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // Get current user profile
 userRoutes.get('/me', authMiddleware, async (c) => {

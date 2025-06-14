@@ -1,12 +1,12 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import type { Env } from '../index'
+import type { Env, Variables } from '../index'
 import { createPrismaClient } from '../utils/db'
 import { hashPassword, verifyPassword } from '../utils/password'
 import { generateJWT } from '../utils/jwt'
 
-const authRoutes = new Hono<{ Bindings: Env }>()
+const authRoutes = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // Validation schemas
 const registerSchema = z.object({
