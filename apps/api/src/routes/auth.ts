@@ -60,7 +60,8 @@ authRoutes.post('/register', zValidator('json', registerSchema), async (c) => {
     )
     
     // Return user data without password
-    const { password: _, ...userWithoutPassword } = user
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user
     
     return c.json({
       user: userWithoutPassword,
@@ -101,7 +102,8 @@ authRoutes.post('/login', zValidator('json', loginSchema), async (c) => {
     )
     
     // Return user data without password
-    const { password: _, ...userWithoutPassword } = user
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user
     
     return c.json({
       user: userWithoutPassword,
@@ -149,7 +151,8 @@ authRoutes.post('/google', zValidator('json', googleLoginSchema), async (c) => {
     )
     
     // Return user data without password
-    const { password: _, ...userWithoutPassword } = user
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user
     
     return c.json({
       user: userWithoutPassword,

@@ -158,6 +158,7 @@ placeRoutes.post('/search', optionalAuthMiddleware, zValidator('json', searchSch
     
     if (searchParams.facilities && searchParams.facilities.length > 0) {
       filteredPlaces = filteredPlaces.filter(place => 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         searchParams.facilities!.some(facility => place.facilities?.includes(facility as any))
       )
     }
@@ -208,6 +209,7 @@ placeRoutes.post('/search', optionalAuthMiddleware, zValidator('json', searchSch
     
     if (searchParams.facilities && searchParams.facilities.length > 0) {
       filteredPlaces = filteredPlaces.filter(place => 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         searchParams.facilities!.some(facility => place.facilities?.includes(facility as any))
       )
     }
