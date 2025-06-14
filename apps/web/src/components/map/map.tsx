@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
-import L from 'leaflet'
 import { Place } from '@quicktrip/shared'
 
-// Fix for default markers in react-leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-})
+// Leaflet icon fix that only runs on client side
+function fixLeafletIcons() {
+  if (typeof window !== 'undefined') {
+    const L = require('leaflet')
+    // Fix for default markers in react-leaflet
+    delete (L.Icon.Default.prototype as any)._getIconUrl
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    })
+  }
+}
 
 // Helper functions for displaying place information
 function getCategoryLabel(category: string): string {
@@ -58,6 +63,7 @@ export function Map({ center, places, radius, onPlaceClick }: MapProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    fixLeafletIcons()
     setMounted(true)
   }, [])
 

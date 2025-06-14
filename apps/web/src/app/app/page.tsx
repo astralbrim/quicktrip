@@ -2,12 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { Map } from '@/components/map/map'
+import dynamic from 'next/dynamic'
 import { PlacesList } from '@/components/places/places-list'
 import { SearchHistory } from '@/components/search/search-history'
 import { CategoryFilter } from '@/components/search/category-filter'
 import { DetailedFilter } from '@/components/search/detailed-filter'
 import { Place, SearchRequest, TIME_PRESETS, TRANSPORT_MODES } from '@quicktrip/shared'
+
+// Dynamically import Map component to avoid SSR issues
+const Map = dynamic(() => import('@/components/map/map').then(mod => ({ default: mod.Map })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+      <div className="text-gray-500">地図を読み込み中...</div>
+    </div>
+  )
+})
 
 export default function AppPage() {
   const { data: session, status } = useSession()
