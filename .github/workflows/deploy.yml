@@ -78,7 +78,7 @@ jobs:
         NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8787' }}
     
     - name: Deploy to Vercel
-      if: ${{ secrets.VERCEL_TOKEN != '' }}
+      continue-on-error: true
       uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -116,7 +116,7 @@ jobs:
       run: cd apps/api && pnpm prisma generate
     
     - name: Deploy to Cloudflare Workers
-      if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+      continue-on-error: true
       uses: cloudflare/wrangler-action@v3
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
