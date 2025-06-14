@@ -7,7 +7,7 @@ import { PlacesList } from '@/components/places/places-list'
 import { SearchHistory } from '@/components/search/search-history'
 import { CategoryFilter } from '@/components/search/category-filter'
 import { DetailedFilter } from '@/components/search/detailed-filter'
-import { Place, SearchRequest, TIME_PRESETS, TRANSPORT_MODES } from '@quicktrip/shared'
+import { Place, SearchRequest, SearchHistory, SearchFilters, TransportMode, PlaceCategory, Facility, TIME_PRESETS, TRANSPORT_MODES } from '@quicktrip/shared'
 import { apiRequest, getApiUrl } from '@/lib/api'
 
 // Dynamically import Map component to avoid SSR issues
@@ -91,7 +91,7 @@ export default function AppPage() {
         
         // Auto-search when location is obtained
         searchPlaces(latitude, longitude, timeMinutes, transport)
-      } catch (error: any) {
+      } catch (error: GeolocationPositionError | Error | unknown) {
         console.error('Location error details:', error)
         let errorMessage = '位置情報の取得に失敗しました。'
         
@@ -120,18 +120,18 @@ export default function AppPage() {
     getLocation()
   }, [])
 
-  const searchPlaces = async (lat: number, lng: number, time: number, transportMode: string, categories?: string[], detailedFilters?: any) => {
+  const searchPlaces = async (lat: number, lng: number, time: number, transportMode: string, categories?: string[], detailedFilters?: SearchFilters) => {
     setIsLoading(true)
     try {
       const searchParams: SearchRequest = {
         latitude: lat,
         longitude: lng,
         timeMinutes: time,
-        transport: transportMode as any,
-        categories: categories || selectedCategories.length > 0 ? selectedCategories as any : undefined,
+        transport: transportMode as TransportMode,
+        categories: categories || selectedCategories.length > 0 ? selectedCategories as PlaceCategory[] : undefined,
         priceRange: detailedFilters?.priceRange || priceRange,
         openNow: detailedFilters?.openNow !== undefined ? detailedFilters.openNow : openNow,
-        facilities: detailedFilters?.facilities || facilities.length > 0 ? facilities as any : undefined,
+        facilities: detailedFilters?.facilities || facilities.length > 0 ? facilities as Facility[] : undefined,
       }
 
       const response = await apiRequest('/api/places/search', {
@@ -183,7 +183,7 @@ export default function AppPage() {
     console.log('Place clicked:', place)
   }
 
-  const handleHistoryClick = (historyItem: any) => {
+  const handleHistoryClick = (historyItem: SearchHistory) => {
     // Set search parameters from history
     setTimeMinutes(historyItem.timeMinutes)
     setTransport(historyItem.transport)
@@ -202,7 +202,7 @@ export default function AppPage() {
     }
   }
 
-  const handleDetailedFiltersChange = (filters: any) => {
+  const handleDetailedFiltersChange = (filters: SearchFilters) => {
     setPriceRange(filters.priceRange)
     setOpenNow(filters.openNow || false)
     setFacilities(filters.facilities || [])
@@ -331,7 +331,7 @@ export default function AppPage() {
               <select
                 value={transport}
                 onChange={(e) => {
-                  const newTransport = e.target.value as any
+                  const newTransport = e.target.value as TransportMode
                   setTransport(newTransport)
                   // Auto-search when transport changes
                   if (currentLocation) {

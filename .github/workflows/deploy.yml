@@ -82,7 +82,6 @@ jobs:
       run: |
         if [ "${{ secrets.VERCEL_TOKEN }}" != "" ]; then
           echo "Deploying to Vercel..."
-          cd apps/web
           npx vercel deploy --prod --token="${{ secrets.VERCEL_TOKEN }}" --yes
         else
           echo "VERCEL_TOKEN is not configured. Skipping Vercel deployment. Build was successful."

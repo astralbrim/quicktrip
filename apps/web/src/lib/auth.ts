@@ -97,7 +97,7 @@ export const authOptions: NextAuthOptions = {
           }
         } else {
           // Handle credentials login
-          token.accessToken = (user as any).accessToken
+          token.accessToken = user.accessToken
         }
       }
       return token
