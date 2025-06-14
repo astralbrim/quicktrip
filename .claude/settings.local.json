@@ -44,7 +44,9 @@
       "Bash(pnpm prisma generate:*)",
       "Bash(NEXTAUTH_SECRET=test-secret NEXTAUTH_URL=http://localhost:3000 NEXT_PUBLIC_API_URL=http://localhost:8787 pnpm build)",
       "Bash(npx vercel:*)",
-      "Bash(pnpm run:*)"
+      "Bash(pnpm run:*)",
+      "Bash(npx wrangler deployments:*)",
+      "Bash(npx wrangler:*)"
     ],
     "deny": []
   }
